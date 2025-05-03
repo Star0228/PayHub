@@ -15,8 +15,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 登录 / 注册的前端请求路径接口不能拦截
-        registry.addInterceptor(loginInterceptor).excludePathPatterns("/user/login",
-                "/user/register", "/api/spider",
-        "/api/user/login", "api/user/register");
+        registry.addInterceptor(loginInterceptor).excludePathPatterns(
+                "/account/login",
+                "/account/register",
+                "/account/reset-password"
+        );
     }
 }
