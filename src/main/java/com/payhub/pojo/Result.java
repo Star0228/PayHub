@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor // 自动添加构造方法
+@AllArgsConstructor
 public class Result<T> {
     private Integer code; // 0 success; 1 fail
     private String msg; // "成功"
