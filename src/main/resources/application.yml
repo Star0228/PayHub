@@ -1,9 +1,24 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payhub
+    url: jdbc:mysql://localhost:3306/pay_hub
     username: root
-    password: 123456
-
+    password: 
+  sql:
+    init:
+      mode: always
+      platform: mysql
+  mail:
+    host: smtp.zju.edu.cn
+    port: 25
+    username: zjuheadmaster@zju.edu.cn
+    password: NvbjsIHyIKx8CZuB
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+payhub:
+  mail:
+    sender:
+      from: zjuheadmaster@zju.edu.cn
 
 
