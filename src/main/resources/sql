@@ -19,7 +19,8 @@ CREATE TABLE account (
     gender VARCHAR(64),
     occupation VARCHAR(255),
     phone_number BIGINT,
-    annual_income DECIMAL(15,2)
+    annual_income DECIMAL(15,2),
+    user_flag INT NOT NULL DEFAULT 1 -- 1: 普通用户, 2: 管理员
 );
 
 -- 账户余额表
@@ -44,5 +45,5 @@ CREATE TABLE transaction_record (
     type VARCHAR(20) NOT NULL, -- TRANSFER, DEPOSIT, WITHDRAWAL 
     description VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP,
+    completed_at TIMESTAMP
 );

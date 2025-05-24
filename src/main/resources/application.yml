@@ -4,6 +4,6 @@ spring:
     url: jdbc:mysql://localhost:3306/payhub
     username: root
     password: 123456
-
-
-
+mybatis:
+  configuration:
+    mapUnderscoreToCamelCase: True

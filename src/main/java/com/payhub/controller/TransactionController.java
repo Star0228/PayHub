@@ -62,9 +62,31 @@ public class TransactionController {
 
     // 查询转账记录
     @GetMapping("/records/{accountId}")
-    public Result getTransactionRecords(@PathVariable Long accountId) {
+    public Result<?> getTransactionRecords(@PathVariable Long accountId, @RequestParam(required = false) Integer userFlag) {
         try {
-            List<TransactionRecord> records = transactionService.getTransactionRecords(accountId);
+            // 如果是管理员，允许查所有用户的记录，否则只能查自己的
+            if (userFlag != null && userFlag == 2) {
+                // 管理员：查所有记录
+                List<TransactionRecord> records = transactionService.getAllTransactionRecords();
+                return Result.success(records, records.size());
+            } else {
+                // 普通用户：只能查自己的
+                List<TransactionRecord> records = transactionService.getTransactionRecords(accountId);
+                return Result.success(records, records.size());
+            }
+        } catch (Exception e) {
+            return Result.error("查询交易记录失败: " + e.getMessage());
+        }
+    }
+
+    // 新增：按时间范围查询转账记录（仅管理员可用）
+    @GetMapping("/records-range")
+    public Result<?> getTransactionRecordsByTime(@RequestParam String startTime, @RequestParam String endTime, @RequestParam Integer userFlag) {
+        try {
+            if (userFlag == null || userFlag != 2) {
+                return Result.error("无权限，仅管理员可用");
+            }
+            List<TransactionRecord> records = transactionService.getTransactionRecordsByTimeRange(startTime, endTime);
             return Result.success(records, records.size());
         } catch (Exception e) {
             return Result.error("查询交易记录失败: " + e.getMessage());

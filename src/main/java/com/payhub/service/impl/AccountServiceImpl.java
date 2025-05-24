@@ -51,6 +51,10 @@ public class AccountServiceImpl implements AccountService {
         account.setId(generateUniqueId());
         Long accountId = generateAccountId();
         account.setAccountId(accountId);
+        // 设置用户类型，默认普通用户
+        if (account.getUserFlag() == null) {
+            account.setUserFlag(1); // 默认普通用户
+        }
         
         // 如果其他字段为空，设置默认值
         if (account.getCardId() == null) {

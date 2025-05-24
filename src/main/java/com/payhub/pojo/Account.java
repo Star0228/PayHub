@@ -15,4 +15,5 @@ public class Account {
     private String occupation;
     private Long phoneNumber;
     private Double annualIncome;
+    private Integer userFlag; // 1: 普通用户, 2: 管理员
 }

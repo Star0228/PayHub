@@ -21,8 +21,8 @@ public interface AccountMapper {
     @Select("select max(account_id) from account")
     Long getMaxAccountId();
 
-    @Insert("insert into account (id, account_id, password, card_id, username, email, address, gender, occupation, phone_number, annual_income) " +
-            "values (#{id}, #{accountId}, #{password}, #{cardId}, #{username}, #{email}, #{address}, #{gender}, #{occupation}, #{phoneNumber}, #{annualIncome})")
+    @Insert("insert into account (id, account_id, password, card_id, username, email, address, gender, occupation, phone_number, annual_income, user_flag) " +
+            "values (#{id}, #{accountId}, #{password}, #{cardId}, #{username}, #{email}, #{address}, #{gender}, #{occupation}, #{phoneNumber}, #{annualIncome}, #{userFlag})")
     void insert(Account account);
 
     @Update("update account set password = #{password} where username = #{username}")

@@ -22,8 +22,9 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping(value = "/register", produces = "application/json")
-    public Result register(@RequestBody Account account) {
+    public Result<?> register(@RequestBody Account account) {
         System.out.println("Received registering account: " + account);
+        // 支持 userFlag 参数，前端可传递，未传递时后端会默认普通用户
         String registerFeedback = accountService.register(account);
         
         if(registerFeedback.startsWith("注册成功")){
@@ -40,7 +41,7 @@ public class AccountController {
     }
 
     @PostMapping(value = "/login", produces = "application/json")
-    public Result login(@RequestBody Account account) {
+    public Result<?> login(@RequestBody Account account) {
         System.out.println("Received logging account: " + account);
         Account loginAccount = null;
         
@@ -62,12 +63,12 @@ public class AccountController {
         // 验证密码
         if(loginAccount.getPassword().equals(account.getPassword())) {
             System.out.println("Login success");
-
             // 生成 jwt 令牌
             Map<String,Object> claims = new HashMap<>();
             claims.put("id", loginAccount.getId());
             claims.put("accountId", loginAccount.getAccountId());
             claims.put("username", loginAccount.getUsername());
+            claims.put("userFlag", loginAccount.getUserFlag()); // 加入 userFlag
             String token = JwtUtil.genToken(claims);
             
             // 返回token和accountId
@@ -82,7 +83,7 @@ public class AccountController {
     }
 
     @PostMapping(value = "/reset-password", produces = "application/json")
-    public Result resetPassword(@RequestBody Account account) {
+    public Result<?> resetPassword(@RequestBody Account account) {
         System.out.println("Received reset password account: " + account);
 
         accountService.resetPasswordByUsername(account.getUsername(), account.getPassword());

@@ -116,6 +116,17 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionRecord> getTransactionRecords(Long accountId) {
         return transactionRecordMapper.selectByAccountId(accountId);
     }
+
+    @Override
+    public List<TransactionRecord> getAllTransactionRecords() {
+        return transactionRecordMapper.selectAll();
+    }
+
+    @Override
+    public List<TransactionRecord> getTransactionRecordsByTimeRange(String startTime, String endTime) {
+        // 假设时间格式为 yyyy-MM-dd HH:mm:ss
+        return transactionRecordMapper.selectByTimeRange(startTime, endTime);
+    }
     
     // uuid
     private String generateTransactionId() {

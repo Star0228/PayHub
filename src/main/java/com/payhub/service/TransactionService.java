@@ -16,4 +16,10 @@ public interface TransactionService {
     
     // 查交易记录
     List<TransactionRecord> getTransactionRecords(Long accountId);
+
+    // 管理员：查所有交易记录
+    List<TransactionRecord> getAllTransactionRecords();
+
+    // 管理员：按时间范围查交易记录
+    List<TransactionRecord> getTransactionRecordsByTimeRange(String startTime, String endTime);
 }

@@ -21,4 +21,10 @@ public interface TransactionRecordMapper {
     
     @Select("select * from transaction_record where from_account_id = #{accountId} or to_account_id = #{accountId} order by created_at DESC")
     List<TransactionRecord> selectByAccountId(Long accountId);
+
+    @Select("select * from transaction_record order by created_at DESC")
+    List<TransactionRecord> selectAll();
+
+    @Select("select * from transaction_record where created_at between #{startTime} and #{endTime} order by created_at DESC")
+    List<TransactionRecord> selectByTimeRange(String startTime, String endTime);
 }
