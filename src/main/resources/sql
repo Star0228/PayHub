@@ -9,8 +9,8 @@ use payhub;
 
 
 CREATE TABLE account (
-    id BIGINT PRIMARY KEY,
-    account_id BIGINT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT UNIQUE NOT NULL,
     password VARCHAR(255),
     card_id BIGINT,
     username VARCHAR(255),
@@ -47,3 +47,61 @@ CREATE TABLE transaction_record (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP
 );
+
+-- 贷款申请记录表
+CREATE TABLE LoanApplicationRecord (
+                                       loan_application_record_id VARCHAR(36) PRIMARY KEY,
+                                       account_id BIGINT NOT NULL,
+                                       amount_of_money DECIMAL(12, 2) NOT NULL,
+                                       application_date DATE NOT NULL,
+                                       loan_examiner_id VARCHAR(20),
+                                       credit_score INT,
+                                       status VARCHAR(20) NOT NULL DEFAULT '待审核', -- 待审核, 通过, 拒绝
+                                       term INT, -- 贷款期限（月）
+                                       purpose VARCHAR(255), -- 贷款用途
+                                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 贷款记录表
+CREATE TABLE Loan (
+                      loan_id VARCHAR(36) PRIMARY KEY,
+                      loan_application_record_id VARCHAR(36) NOT NULL,
+                      amount_of_money DECIMAL(12, 2) NOT NULL,
+                      repayment_date DATE NOT NULL,
+                      interest_rate FLOAT NOT NULL,
+                      is_overdue BOOLEAN DEFAULT FALSE,
+                      status VARCHAR(20) NOT NULL DEFAULT '放款中', -- 放款中, 还款中, 已结清, 已逾期
+                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 外汇汇率表
+CREATE TABLE ForeignExchange (
+                                 foreign_exchange_id VARCHAR(36) PRIMARY KEY,
+                                 currency_pair VARCHAR(10) NOT NULL UNIQUE,
+                                 current_rate FLOAT NOT NULL,
+                                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 外汇交易记录表
+CREATE TABLE ForeignExchangeTrade (
+                                      foreign_exchange_trade_id VARCHAR(36) PRIMARY KEY,
+                                      account_id BIGINT NOT NULL,
+                                      foreign_exchange_id VARCHAR(36) NOT NULL,
+                                      currency_pair VARCHAR(10) NOT NULL,
+                                      amount DECIMAL(15, 2) NOT NULL,
+                                      trade_type VARCHAR(10) NOT NULL, -- BUY, SELL
+                                      status VARCHAR(20) NOT NULL, -- SUCCESS, FAILED
+                                      trade_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                      exchanged_amount DECIMAL(15, 2),
+                                      exchange_rate FLOAT
+);
+
+-- 插入一些测试汇率数据
+INSERT INTO ForeignExchange (foreign_exchange_id, currency_pair, current_rate) VALUES
+                                                                                   ('fx001', 'USD/CNY', 7.25),
+                                                                                   ('fx002', 'EUR/CNY', 7.85),
+                                                                                   ('fx003', 'JPY/CNY', 0.045),
+                                                                                   ('fx004', 'GBP/CNY', 9.12),
+                                                                                   ('fx005', 'HKD/CNY', 0.93);
