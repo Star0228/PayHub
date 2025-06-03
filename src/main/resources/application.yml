@@ -3,7 +3,19 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/payhub
     username: root
-    password: wangjialei123
+    password:
+  mail:
+    host: smtp.zju.edu.cn
+    port: 25
+    username: zjuheadmaster@zju.edu.cn
+    password: NvbjsIHyIKx8CZuB
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+payhub:
+  mail:
+    sender:
+      from: zjuheadmaster@zju.edu.cn
 mybatis:
   configuration:
     mapUnderscoreToCamelCase: true

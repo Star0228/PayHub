@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor).excludePathPatterns(
                 "/account/login",
                 "/account/register",
-                "/account/reset-password"
+                "/account/reset-password",
+                "/vcode/send"
         );
     }
 }
