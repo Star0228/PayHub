@@ -212,31 +212,22 @@ export default {
         'Password:', this.loginForm.password
       );
 
-      // 2. 检查这个 IF 条件
-      if (this.loginForm.id && this.loginForm.password) { // 注意：这里没有检查 username
-        console.log('Initial condition (ID and Password exist) met.'); // 确认条件是否满足
+      // 2. 检查这个 IF 条件 - 确保所有必填字段都有值
+      if (this.loginForm.id && this.loginForm.username && this.loginForm.password) {
+        console.log('Initial condition (ID, Username and Password exist) met.'); // 确认条件是否满足
         this.loading = true;
         
         const payload = {
-          // 根据您的API文档，accountId (即此处的 id) 和 username 都需要
-          // 如果API期望accountId是数字，请确保转换：
-          // accountId: parseInt(this.loginForm.id, 10), 
-          id: this.loginForm.id, // 如果API字段名为 id，则保持。若为 accountId, 则应修改。
+          accountId: parseInt(this.loginForm.id, 10), // 确保转换为数字类型
           username: this.loginForm.username,
           password: this.loginForm.password
         };
         console.log('Payload to be sent:', payload); // 查看将要发送的数据
 
-        // 3. 确认 loginUser 函数被正确导入且可用
-        // 在 <script> 顶部应该有类似: import { loginUser } from '@/api/user';
-        
-        // 4. 调用API
+        // 调用API
         loginUser(payload).then(response => {
           console.log('Login API response received:', response); // 查看原始响应
           
-          // 建议：使用 response.msg 显示成功消息
-          // this.$message.success(response.code) // response.code 是数字 (0), 通常提示信息是字符串
-          // this.$message.success(response)
           if (response) { 
             this.$message.success(response.msg || '登录成功！');
             const storePayload = {
@@ -245,10 +236,9 @@ export default {
               username: this.loginForm.username
               // password: this.loginForm.password
             };
-            // this.$message.success(this.loginForm.id)
-            this.$store.dispatch('user/login', storePayload) // 建议传递 response.data
+            
+            this.$store.dispatch('user/login', storePayload)
               .then(path => {
-                // this.$message.success(path);
                 this.$router.push({ path: path });
               })
               .catch(storeError => {
@@ -256,7 +246,6 @@ export default {
                 this.$message.error('登录状态处理失败');
               });
           } else {
-            // 如果 response.code !== 0，也应该提示具体的错误信息
             this.$message.error(response.msg || '登录失败，请检查您的凭据。');
           }
         }).catch((error) => {
@@ -267,16 +256,13 @@ export default {
                             : '登录请求失败，请检查网络或联系管理员。';
           this.$message.error(errorMsg);
         }).finally(() => {
-          // 5. 确保 loading 状态在所有情况下都被重置
+          // 确保 loading 状态在所有情况下都被重置
           this.loading = false;
         });
       } else {
-        // 6. 如果初始 IF 条件不满足
-        console.log('Initial condition (ID and Password exist) NOT met.');
-        // 建议修改提示信息以匹配表单字段
+        console.log('Initial condition NOT met.');
+        // 修改提示信息以匹配所有必填字段
         this.$message.error('请输入账户ID、用户名和密码'); 
-        // 注意：如果在这里结束，this.loading 不会被设置为 false (如果之前是 true 的话)
-        // 但通常点击时 loading 初始为 false，所以可能不是大问题，但要注意
       }
     },
     selectGet(userId) {
@@ -342,7 +328,7 @@ export default {
       sendCode(codePayload).then(response => {
         // 假设 sendCode 返回类似 { code: 0, msg: "验证码已发送" }
         // 您的代码是 if (response === '验证码已发送')
-        if (response === '验证码已发送') { // 或者 if(response && response.code === 0)
+        if (response === null) { // 或者 if(response && response.code === 0)
           this.$message.success('验证码发送成功')
         } else {
           // const errorMsg = response && response.msg ? response.msg : '验证码发送失败';
@@ -363,11 +349,12 @@ export default {
           return;
       }
       sendCode(this.registerForm.email).then(response => {
-        if (response === '验证码已发送') { //  或者 if(response && response.code === 0)
+        // console.log('验证码发送响应:', response);
+        // if (response === '验证码已发送') { //  或者 if(response && response.code === 0)
           this.$message.success('验证码发送成功')
-        } else {
-          this.$message.error('验证码发送失败')
-        }
+        // } else {
+        //   this.$message.error(response.msg)
+        // }
       }).catch(() => {
         this.$message.error('验证码发送请求失败')
       })
@@ -461,7 +448,7 @@ export default {
 
       registerUser(payload).then(response => { // 修改了传入的参数
         // 根据新的响应格式处理
-        if (response && response.code === 0) {
+        if (response) {
           this.$message.success(response.msg || '注册成功！');
           console.log('注册成功，账户ID:', response.data.accountId); // 使用新的 accountId
           this.registerDialogVisible = false;
@@ -480,7 +467,7 @@ export default {
         const errorMsg = error.response && error.response.data && error.response.data.msg 
                          ? error.response.data.msg 
                          : '注册请求失败';
-        this.$message.error(errorMsg);
+        // this.$message.error(errorMsg);
       });
     },
     showResetPasswordDialog() {
