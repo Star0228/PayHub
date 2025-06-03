@@ -9,8 +9,8 @@ use payhub;
 
 
 CREATE TABLE account (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    account_id BIGINT UNIQUE NOT NULL,
+    id BIGINT PRIMARY KEY,
+    account_id BIGINT,
     password VARCHAR(255),
     card_id BIGINT,
     username VARCHAR(255),
@@ -22,6 +22,9 @@ CREATE TABLE account (
     annual_income DECIMAL(15,2),
     user_flag INT NOT NULL DEFAULT 1 -- 1: 普通用户, 2: 管理员
 );
+
+-- 为 account_id 添加索引
+CREATE INDEX idx_account_account_id ON account(account_id);
 
 -- 账户余额表
 CREATE TABLE account_balance (
@@ -47,6 +50,80 @@ CREATE TABLE transaction_record (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP
 );
+
+-- 存款表
+DROP TABLE IF EXISTS deposit;
+CREATE TABLE deposit (
+    id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    account_id BIGINT NOT NULL COMMENT '账户ID',
+    type VARCHAR(10) NOT NULL COMMENT '存款类型（DEMAND-活期，FIXED-定期）',
+    amount DECIMAL(19,2) NOT NULL COMMENT '存款金额',
+    create_time DATETIME NOT NULL COMMENT '创建时间',
+    maturity_time DATETIME COMMENT '到期时间（定期存款）',
+    interest_rate DECIMAL(5,4) NOT NULL COMMENT '利率',
+    is_withdrawn BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否已取款',
+    withdraw_time DATETIME COMMENT '取款时间',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='存款表';
+
+-- 存款表索引
+CREATE INDEX idx_deposit_account_id ON deposit(account_id);
+CREATE INDEX idx_deposit_create_time ON deposit(create_time);
+CREATE INDEX idx_deposit_maturity_time ON deposit(maturity_time);
+CREATE INDEX idx_deposit_withdraw_time ON deposit(withdraw_time);
+
+-- 信用卡表
+CREATE TABLE credit_card (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+    account_id BIGINT NOT NULL COMMENT '账户ID',
+    card_number VARCHAR(19) NOT NULL UNIQUE COMMENT '卡号',
+    is_lost BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否挂失',
+    credit_limit DECIMAL(15,2) NOT NULL COMMENT '信用额度',
+    available_credit DECIMAL(15,2) NOT NULL COMMENT '可用额度',
+    lost_time TIMESTAMP NULL COMMENT '挂失时间',
+    lost_reason VARCHAR(255) NULL COMMENT '挂失原因',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    FOREIGN KEY (account_id) REFERENCES account(account_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='信用卡表';
+
+-- 信用卡表索引
+CREATE INDEX idx_credit_card_account_id ON credit_card(account_id);
+CREATE INDEX idx_credit_card_card_number ON credit_card(card_number);
+CREATE INDEX idx_credit_card_created_at ON credit_card(created_at);
+
+-- 信用卡收支记录表
+CREATE TABLE credit_card_transaction (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+    credit_card_id BIGINT NOT NULL COMMENT '信用卡ID',
+    account_id BIGINT NOT NULL COMMENT '用户ID',
+    type VARCHAR(10) NOT NULL COMMENT '交易类型（INCOME-收入，EXPENSE-支出）',
+    amount DECIMAL(15,2) NOT NULL COMMENT '交易金额',
+    transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '交易日期',
+    description VARCHAR(255) COMMENT '交易描述',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    FOREIGN KEY (credit_card_id) REFERENCES credit_card(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='信用卡收支记录表';
+
+-- 信用卡收支记录表索引
+CREATE INDEX idx_credit_card_transaction_credit_card_id ON credit_card_transaction(credit_card_id);
+CREATE INDEX idx_credit_card_transaction_account_id ON credit_card_transaction(account_id);
+CREATE INDEX idx_credit_card_transaction_date ON credit_card_transaction(transaction_date);
+
+-- 信用卡申请记录表
+CREATE TABLE credit_card_application (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+    account_id BIGINT NOT NULL COMMENT '申请人ID',
+    reviewer_id BIGINT COMMENT '审查员ID',
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '申请状态（PENDING-待审核，APPROVED-已批准，REJECTED-已拒绝）',
+    application_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '申请日期',
+    review_date TIMESTAMP COMMENT '审核日期'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='信用卡申请记录表';
+
+-- 信用卡申请记录表索引
+CREATE INDEX idx_credit_card_application_account_id ON credit_card_application(account_id);
+CREATE INDEX idx_credit_card_application_reviewer_id ON credit_card_application(reviewer_id);
+CREATE INDEX idx_credit_card_application_status ON credit_card_application(status);
 
 -- 贷款申请记录表
 CREATE TABLE LoanApplicationRecord (
