@@ -15,15 +15,15 @@ public class Result<T> {
 
     // 修改 success 方法，增加 count 参数
     public static <E> Result<E> success(E data, Integer count) {
-        return new Result<>(0, "成功", data, count);
+        return new Result<>(200, "成功", data, count);
     }
 
     public static Result success() {
-        return new Result(0, "成功", null, 0); // count 默认为 0
+        return new Result(200, "成功", null, 0); // count 默认为 0
     }
 
     public static Result error(String msg) {
-        return new Result(1, msg, null, 0); // count 默认为 0
+        return new Result(500, msg, null, 0); // count 默认为 0
     }
 }
 

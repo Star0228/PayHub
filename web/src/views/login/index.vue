@@ -122,6 +122,13 @@
             </el-input>
           </el-form-item>
 
+          <el-form-item label="用户类型" prop="userFlag">
+            <el-select v-model="registerForm.userFlag" placeholder="请选择用户类型" style="width: 100%;">
+              <el-option label="普通用户" :value="1"></el-option>
+              <el-option label="管理员" :value="2"></el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="验证码" prop="verificationCode">
             <el-input v-model="registerForm.verificationCode" placeholder="请输入验证码" style="width: calc(100% - 120px); margin-right:10px;"></el-input>
             <el-button type="primary" @click="sendVerificationCodeForRegister" style="width: 110px;">发送验证码</el-button>
@@ -137,7 +144,7 @@
 </template>
 
 <script>
-import { queryAllUsers, registerUser, loginUser, resetPassword, sendCode} from '@/api/user'
+import { queryAllUsers, registerUser, loginUser, resetPassword, sendCode} from '@/api/account'
 
 export default {
   name: 'Login',
@@ -170,6 +177,7 @@ export default {
         occupation: '',  // 新增：职业
         phoneNumber: '', // 新增：电话号码 (作为字符串处理以支持各种格式)
         annualIncome: null, // 新增：年收入 (null 或 number)
+        userFlag: 1, // 新增：用户类型，默认为普通用户
         verificationCode: ''
       },
       emailList: ['@gmail.com', '@yahoo.com', '@outlook.com', '@qq.com', '@163.com', '@zju.edu.cn'],
@@ -291,6 +299,7 @@ export default {
         occupation: '',
         phoneNumber: '',
         annualIncome: null,
+        userFlag: 1, // 重置时设为默认值
         verificationCode: ''
       };
       this.usernameError = false;
@@ -433,7 +442,8 @@ export default {
         gender: this.registerForm.gender || undefined,
         occupation: this.registerForm.occupation || undefined,
         phoneNumber: this.registerForm.phoneNumber ? String(this.registerForm.phoneNumber) : undefined, // API期望number，但输入可能是string
-        annualIncome: this.registerForm.annualIncome === null || this.registerForm.annualIncome === '' ? undefined : Number(this.registerForm.annualIncome)
+        annualIncome: this.registerForm.annualIncome === null || this.registerForm.annualIncome === '' ? undefined : Number(this.registerForm.annualIncome),
+        userFlag: this.registerForm.userFlag || 1 // 新增：确保userFlag有值
         // verificationCode: this.registerForm.verificationCode, // 根据API是否需要在注册接口提交验证码
       };
       

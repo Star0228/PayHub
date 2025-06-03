@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/payhub
     username: root
-    password:
+    password: 
   mail:
     host: smtp.zju.edu.cn
     port: 25

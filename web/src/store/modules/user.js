@@ -1,6 +1,6 @@
 import {
   queryUser
-} from '@/api/user'
+} from '@/api/account'
 import {
   getToken,
   setToken,
