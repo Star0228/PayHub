@@ -10,7 +10,7 @@ use payhub;
 
 CREATE TABLE account (
     id BIGINT PRIMARY KEY,
-    account_id BIGINT,
+    account_id BIGINT UNIQUE,
     password VARCHAR(255),
     card_id BIGINT,
     username VARCHAR(255),
