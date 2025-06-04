@@ -19,7 +19,20 @@ public class WebConfig implements WebMvcConfigurer {
                 "/account/login",
                 "/account/register",
                 "/account/reset-password",
-                "/vcode/send"
+                "/vcode/send",
+                "/api/loan/apply",
+                "/api/loan/approve",
+                "/api/loan/repay",
+                "/api/loan/applications/**",
+                "/api/loan/loans/**",
+                "/api/loan/check-overdue",
+                "/api/forex/rate",
+                "/api/forex/rates",
+                "/api/forex/trade",
+                "/api/forex/trades/**",
+                "/api/forex/trade/**"
+
+
         );
     }
 }
