@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
-
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 登录 / 注册的前端请求路径接口不能拦截
@@ -20,6 +20,17 @@ public class WebConfig implements WebMvcConfigurer {
                 "/account/register",
                 "/account/reset-password",
                 "/vcode/send",
+                // 存款管理相关API
+                "/deposit/create",
+                "/deposit/list",
+                "/deposit/can-withdraw",
+                "/deposit/withdraw",
+                // 转账管理相关API
+                "/transaction/transfer",
+                "/transaction/balance/**",
+                "/transaction/records/**",
+                "/transaction/records-range",
+                // 账户管理相关API
                 "/api/loan/apply",
                 "/api/loan/approve",
                 "/api/loan/repay",
@@ -31,8 +42,6 @@ public class WebConfig implements WebMvcConfigurer {
                 "/api/forex/trade",
                 "/api/forex/trades/**",
                 "/api/forex/trade/**"
-
-
         );
     }
 }
