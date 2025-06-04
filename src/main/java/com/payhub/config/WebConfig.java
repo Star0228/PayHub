@@ -10,16 +10,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private LoginInterceptor loginInterceptor;
-
-    @Override
+    private LoginInterceptor loginInterceptor;    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 登录 / 注册的前端请求路径接口不能拦截
         registry.addInterceptor(loginInterceptor).excludePathPatterns(
                 "/account/login",
                 "/account/register",
                 "/account/reset-password",
-                "/vcode/send"
+                "/vcode/send",
+                // 存款管理相关API
+                "/deposit/create",
+                "/deposit/list",
+                "/deposit/can-withdraw",
+                "/deposit/withdraw",
+                // 转账管理相关API
+                "/transaction/transfer",
+                "/transaction/balance/**",
+                "/transaction/records/**",
+                "/transaction/records-range"
         );
     }
 }
