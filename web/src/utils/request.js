@@ -3,11 +3,29 @@ import {
   MessageBox,
   Message
 } from 'element-ui'
+import { getToken } from '@/utils/auth'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
 })
+
+// 请求拦截器
+service.interceptors.request.use(
+  config => {
+    const token = getToken()
+    if (token) {
+      // 如果token是对象，提取token字符串
+      const tokenString = typeof token === 'object' ? token.token : token
+      config.headers['Authorization'] = tokenString
+    }
+    return config
+  },
+  error => {
+    console.log(error)
+    return Promise.reject(error)
+  }
+)
 
 service.interceptors.response.use(
   response => {

@@ -2,9 +2,11 @@ package com.payhub.service.impl;
 
 import com.payhub.mapper.DepositMapper;
 import com.payhub.mapper.AccountMapper;
+import com.payhub.mapper.AccountBalanceMapper;
 import com.payhub.pojo.Deposit;
 import com.payhub.pojo.DepositType;
 import com.payhub.pojo.Account;
+import com.payhub.pojo.AccountBalance;
 import com.payhub.service.DepositService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class DepositServiceImpl implements DepositService {
     @Autowired
     private AccountMapper accountMapper;
 
+    @Autowired
+    private AccountBalanceMapper accountBalanceMapper;
+
     @Override
     public Deposit getDepositById(Long depositId) {
         return depositMapper.findById(depositId);
@@ -40,6 +45,23 @@ public class DepositServiceImpl implements DepositService {
         Account account = accountMapper.selectByAccountId(accountId);
         if (account == null) {
             throw new IllegalArgumentException("账户不存在");
+        }
+
+        // 检查并修改账户余额
+        AccountBalance balance = accountBalanceMapper.selectByAccountIdAndCurrency(accountId, "CNY");
+        if (balance == null) {
+            // 如果余额记录不存在，创建一个新的余额记录
+            balance = new AccountBalance();
+            balance.setAccountId(accountId);
+            balance.setCurrency("CNY");
+            balance.setBalance(BigDecimal.ZERO);
+            accountBalanceMapper.insert(balance);
+        }
+
+        // 增加账户余额
+        int result = accountBalanceMapper.increaseBalance(accountId, amount, "CNY");
+        if (result == 0) {
+            throw new IllegalStateException("更新账户余额失败");
         }
         
         Deposit deposit = new Deposit();
@@ -94,6 +116,18 @@ public class DepositServiceImpl implements DepositService {
         // 计算利息
         BigDecimal interest = calculateInterest(depositId);
         BigDecimal totalAmount = deposit.getAmount().add(interest);
+
+        // 检查账户余额是否足够
+        AccountBalance balance = accountBalanceMapper.selectByAccountIdAndCurrency(deposit.getAccountId(), "CNY");
+        if (balance == null || balance.getBalance().compareTo(totalAmount) < 0) {
+            throw new IllegalStateException("账户余额不足");
+        }
+
+        // 减少账户余额
+        int result = accountBalanceMapper.decreaseBalance(deposit.getAccountId(), totalAmount, "CNY");
+        if (result == 0) {
+            throw new IllegalStateException("更新账户余额失败");
+        }
 
         // 更新存款状态和取款时间
         LocalDateTime now = LocalDateTime.now();

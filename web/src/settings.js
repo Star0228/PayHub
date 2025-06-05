@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'PriceHub-好价汇',
+  title: 'PayHub-智慧银行',
 
   /**
    * @type {boolean} true | false

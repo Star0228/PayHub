@@ -229,22 +229,62 @@ export default {
           console.log('Login API response received:', response); // 查看原始响应
           
           if (response) { 
-            this.$message.success(response.msg || '登录成功！');
+            this.$message.success('登录成功！');
             const storePayload = {
-              token: response, // 假设 token 在 response.data 中
-              accountId: this.loginForm.id,
+              token: response.token,
+              userFlag: response.userFlag,
+              accountId: response.accountId, // 优先使用store中的userId
               username: this.loginForm.username
-              // password: this.loginForm.password
             };
             
             this.$store.dispatch('user/login', storePayload)
-              .then(path => {
-                this.$router.push({ path: path });
-              })
-              .catch(storeError => {
-                console.error('Vuex dispatch error after login:', storeError);
-                this.$message.error('登录状态处理失败');
-              });
+  .then(async result => {
+    console.log('Vuex login成功，返回结果:', result);
+    
+    // 检查用户状态
+    console.log('当前用户状态:', {
+      token: this.$store.state.user.token,
+      userId: this.$store.state.user.userId,
+      username: this.$store.state.user.userName,
+      roles: this.$store.state.user.roles
+    });
+    
+    // 如果需要生成路由，手动触发路由生成
+    if (result.needRouteGeneration) {
+      try {
+        console.log('开始手动生成路由...');
+        
+        // 获取用户角色
+        const roles = await this.$store.dispatch('user/getInfo');
+        console.log('获取到的用户角色:', roles);
+        
+        // 生成可访问路由
+        const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles);
+        console.log('生成的可访问路由:', accessRoutes);
+        
+        // 动态添加路由
+        this.$router.addRoutes(accessRoutes);
+        console.log('路由添加完成');
+        
+        // 跳转到指定路径
+        this.$router.push({ path: result.redirectPath });
+      } catch (error) {
+        console.error('路由生成失败:', error);
+        this.$router.push({ path: '/deposit' });
+      }
+    } else {
+      // 跳转到指定路径
+      if (result.redirectPath) {
+        this.$router.push({ path: result.redirectPath });
+      } else {
+        this.$router.push({ path: '/deposit' });
+      }
+    }
+  })
+  .catch(storeError => {
+    console.error('Vuex dispatch error after login:', storeError);
+    this.$message.error('登录状态处理失败');
+  });
           } else {
             this.$message.error(response.msg || '登录失败，请检查您的凭据。');
           }
