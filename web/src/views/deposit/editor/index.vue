@@ -14,14 +14,6 @@
               inline 
               class="form-container"
             >
-              <el-form-item label="账户ID" prop="accountId">
-                <el-input 
-                  v-model="depositForm.accountId" 
-                  type="number" 
-                  placeholder="请输入账户ID"
-                  class="form-input"
-                />
-              </el-form-item>
               <el-form-item label="存款类型" prop="type">
                 <el-select v-model="depositForm.type" placeholder="请选择存款类型" class="form-input">
                   <el-option label="活期存款" value="DEMAND" />
@@ -55,15 +47,7 @@
           <!-- 查询存款记录区域 -->
           <div class="section">
             <h2>查询存款记录</h2>
-            <el-form :model="queryDepositForm" inline class="form-container">
-              <el-form-item label="账户ID">
-                <el-input 
-                  v-model="queryDepositForm.accountId" 
-                  type="number" 
-                  placeholder="请输入账户ID"
-                  class="form-input"
-                />
-              </el-form-item>
+            <el-form inline class="form-container">
               <el-form-item>
                 <el-button 
                   type="primary" 
@@ -71,7 +55,7 @@
                   :loading="queryDepositLoading"
                   class="action-button"
                 >
-                  查询记录
+                  查询我的存款记录
                 </el-button>
               </el-form-item>
             </el-form>
@@ -168,14 +152,6 @@
               inline 
               class="form-container"
             >
-              <el-form-item label="转出账户ID" prop="fromAccountId">
-                <el-input 
-                  v-model="transferForm.fromAccountId" 
-                  type="number" 
-                  placeholder="请输入转出账户ID"
-                  class="form-input"
-                />
-              </el-form-item>
               <el-form-item label="转入账户ID" prop="toAccountId">
                 <el-input 
                   v-model="transferForm.toAccountId" 
@@ -225,15 +201,7 @@
           <!-- 查询余额区域 -->
           <div class="section">
             <h2>查询账户余额</h2>
-            <el-form :model="balanceForm" inline class="form-container">
-              <el-form-item label="账户ID">
-                <el-input 
-                  v-model="balanceForm.accountId" 
-                  type="number" 
-                  placeholder="请输入账户ID"
-                  class="form-input"
-                />
-              </el-form-item>
+            <el-form inline class="form-container">
               <el-form-item label="币种">
                 <el-input 
                   v-model="balanceForm.currency" 
@@ -248,7 +216,7 @@
                   :loading="balanceLoading"
                   class="action-button"
                 >
-                  查询余额
+                  查询我的余额
                 </el-button>
               </el-form-item>
             </el-form>
@@ -268,15 +236,7 @@
           <!-- 查询交易记录区域 -->
           <div class="section">
             <h2>查询交易记录</h2>
-            <el-form :model="recordForm" inline class="form-container">
-              <el-form-item label="账户ID">
-                <el-input 
-                  v-model="recordForm.accountId" 
-                  type="number" 
-                  placeholder="请输入账户ID"
-                  class="form-input"
-                />
-              </el-form-item>
+            <el-form inline class="form-container">
               <el-form-item>
                 <el-button 
                   type="primary" 
@@ -284,7 +244,7 @@
                   :loading="recordLoading"
                   class="action-button"
                 >
-                  查询记录
+                  查询我的交易记录
                 </el-button>
               </el-form-item>
             </el-form>
@@ -350,12 +310,8 @@ export default {
       
       // 存款相关
       depositForm: { 
-        accountId: '', 
         type: '', 
         amount: '' 
-      },
-      queryDepositForm: { 
-        accountId: '' 
       },
       depositList: [],
       withdrawCheckDialogVisible: false,
@@ -363,28 +319,19 @@ export default {
       
       // 转账相关
       transferForm: { 
-        fromAccountId: '', 
         toAccountId: '', 
         amount: '', 
         currency: 'CNY', 
         description: '' 
       },
       balanceForm: { 
-        accountId: '', 
         currency: 'CNY' 
       },
       balanceResult: null,
-      recordForm: { 
-        accountId: '' 
-      },
       recordList: [],
       
       // 表单验证规则
       depositRules: {
-        accountId: [
-          { required: true, message: '请输入账户ID', trigger: 'blur' },
-          { type: 'string', pattern: /^\d+$/, message: '账户ID必须是数字', trigger: 'blur' }
-        ],
         type: [
           { required: true, message: '请选择存款类型', trigger: 'change' }
         ],
@@ -394,10 +341,6 @@ export default {
         ]
       },
       transferRules: {
-        fromAccountId: [
-          { required: true, message: '请输入转出账户ID', trigger: 'blur' },
-          { type: 'string', pattern: /^\d+$/, message: '账户ID必须是数字', trigger: 'blur' }
-        ],
         toAccountId: [
           { required: true, message: '请输入转入账户ID', trigger: 'blur' },
           { type: 'string', pattern: /^\d+$/, message: '账户ID必须是数字', trigger: 'blur' }
@@ -428,7 +371,7 @@ export default {
         });
       } else {
         // 手动验证
-        if (!this.depositForm.accountId || !this.depositForm.type || !this.depositForm.amount) {
+        if (!this.depositForm.type || !this.depositForm.amount) {
           this.$message.error('请填写所有必填字段');
           return;
         }
@@ -440,7 +383,7 @@ export default {
       
       const payload = {
         token:this.token,
-        userId: parseInt(this.depositForm.accountId, 10),
+        userId: this.userId,
         type: this.depositForm.type,
         amount: parseFloat(this.depositForm.amount)
       };
@@ -452,7 +395,6 @@ export default {
         
         if (response) {
           this.$message.success('创建存款成功');
-          this.queryDepositForm.accountId = this.depositForm.accountId;
           this.handleQueryDeposits();
           this.resetDepositForm();
         } else {
@@ -470,19 +412,14 @@ export default {
     },
 
     handleQueryDeposits() {
-      console.log('handleQueryDeposits called. Query data:', this.queryDepositForm);
-      
-      if (!this.queryDepositForm.accountId) {
-        this.$message.error('请输入账户ID');
-        return;
-      }
+      console.log('handleQueryDeposits called. Using userId:', this.userId);
       
       this.queryDepositLoading = true;
       this.tableLoading = true;
       
       const payload = {
-        token:this.token,
-        accountId: this.queryDepositForm.accountId
+        token: this.token,
+        accountId: this.userId
       };
       
       queryDeposits(payload).then(response => {
@@ -520,11 +457,11 @@ export default {
       checkWithdrawEligibility(payload).then(response => {
         console.log('Check withdraw response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.withdrawCheckResult = response.data;
+        if (response ) {
+          this.withdrawCheckResult = response;
           this.withdrawCheckDialogVisible = true;
         } else {
-          this.$message.error(response.msg || '检查取款资格失败');
+          this.$message.error('检查取款资格失败');
         }
       }).catch((error) => {
         console.error("Check withdraw error:", error);
@@ -571,7 +508,6 @@ export default {
 
     resetDepositForm() {
       this.depositForm = {
-        accountId: '',
         type: '',
         amount: ''
       };
@@ -595,12 +531,12 @@ export default {
         });
       } else {
         // 手动验证
-        if (!this.transferForm.fromAccountId || !this.transferForm.toAccountId || !this.transferForm.amount) {
+        if (!this.transferForm.toAccountId || !this.transferForm.amount) {
           this.$message.error('请填写所有必填字段');
           return;
         }
-        if (this.transferForm.fromAccountId === this.transferForm.toAccountId) {
-          this.$message.error('转出账户和转入账户不能相同');
+        if (this.userId === this.transferForm.toAccountId) {
+          this.$message.error('不能转账给自己');
           return;
         }
         this.submitTransfer();
@@ -611,8 +547,8 @@ export default {
       this.transferLoading = true;
       
       const payload = {
-        token:this.token,
-        fromAccountId: parseInt(this.transferForm.fromAccountId, 10),
+        token: this.token,
+        fromAccountId: this.userId,
         toAccountId: parseInt(this.transferForm.toAccountId, 10),
         amount: parseFloat(this.transferForm.amount),
         currency: this.transferForm.currency || 'CNY',
@@ -642,23 +578,18 @@ export default {
     },
 
     handleQueryBalance() {
-      console.log('handleQueryBalance called. Form data:', this.balanceForm);
-      
-      if (!this.balanceForm.accountId) {
-        this.$message.error('请输入账户ID');
-        return;
-      }
+      console.log('handleQueryBalance called. Using userId:', this.userId);
       
       this.balanceLoading = true;
       
       queryBalance(
-        parseInt(this.balanceForm.accountId, 10), 
+        this.userId, 
         this.balanceForm.currency || 'CNY'
       ).then(response => {
         console.log('Query balance response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.balanceResult = response.data;
+        if (response ) {
+          this.balanceResult = response;
         } else {
           this.balanceResult = null;
           this.$message.error(response.msg || '查询余额失败');
@@ -676,20 +607,15 @@ export default {
     },
 
     handleQueryRecords() {
-      console.log('handleQueryRecords called. Form data:', this.recordForm);
-      
-      if (!this.recordForm.accountId) {
-        this.$message.error('请输入账户ID');
-        return;
-      }
+      console.log('handleQueryRecords called. Using userId:', this.userId);
       
       this.recordLoading = true;
       this.recordTableLoading = true;
       
-      queryTransactionRecords(parseInt(this.recordForm.accountId, 10)).then(response => {
+      queryTransactionRecords(this.userId).then(response => {
         console.log('Query records response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
+        if (response ) {
           this.recordList = response.data || [];
           if (this.recordList.length === 0) {
             this.$message.info('未找到交易记录');
@@ -713,7 +639,6 @@ export default {
 
     resetTransferForm() {
       this.transferForm = {
-        fromAccountId: '',
         toAccountId: '',
         amount: '',
         currency: 'CNY',

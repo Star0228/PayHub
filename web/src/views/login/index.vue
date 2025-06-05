@@ -231,11 +231,10 @@ export default {
           if (response) { 
             this.$message.success('登录成功！');
             const storePayload = {
-              token: response.token, // 假设 token 在 response.data 中
+              token: response.token,
               userFlag: response.userFlag,
-              accountId: this.loginForm.id,
+              accountId: response.accountId, // 优先使用store中的userId
               username: this.loginForm.username
-              // password: this.loginForm.password
             };
             
             this.$store.dispatch('user/login', storePayload)
