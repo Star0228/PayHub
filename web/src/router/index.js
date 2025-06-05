@@ -46,22 +46,34 @@ export const constantRoutes = [
         }
       }
       ]
-    }
-    // ,
-    // {
-    //   path: '/',
-    //   component: Layout,
-    //   redirect: '/record',
-    //   children: [{
-    //     path: 'record',
-    //     name: 'Record',
-    //     component: () => import('@/views/record/all/index'),
-    //     meta: {
-    //       title: '个性化记录',
-    //       icon: 'new3'
-    //     }
-    //   }]
-    // }
+    },
+  {
+    path: '/credit-card',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'CreditCard',
+        component: () => import('@/views/credit-card/index'),
+        meta: { title: '信用卡管理', icon: 'credit-card' }
+      }
+    ]
+  }
+  // ,
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/record',
+  //   children: [{
+  //     path: 'record',
+  //     name: 'Record',
+  //     component: () => import('@/views/record/all/index'),
+  //     meta: {
+  //       title: '个性化记录',
+  //       icon: 'new3'
+  //     }
+  //   }]
+  // }
 ]
 
 export const asyncRoutes = [

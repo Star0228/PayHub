@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/credit-card/application")
+@CrossOrigin(origins = "*")
 public class CreditCardApplicationController {
 
     @Autowired
@@ -21,6 +22,7 @@ public class CreditCardApplicationController {
         try {
             Long accountId = UserContext.getAccountId();
             if (accountId == null) {
+                System.out.println("用户未登录");
                 return Result.error("用户未登录");
             }
             
@@ -40,6 +42,7 @@ public class CreditCardApplicationController {
         try {
             Long accountId = UserContext.getAccountId();
             if (accountId == null) {
+                System.out.println("用户未登录");
                 return Result.error("用户未登录");
             }
             

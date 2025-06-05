@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/credit-card")
+@CrossOrigin(origins = "*")
 public class CreditCardController {
 
     @Autowired
@@ -50,6 +51,7 @@ public class CreditCardController {
         try {
             Long accountId = UserContext.getAccountId();
             if (accountId == null) {
+                System.out.println("用户未登录");
                 return Result.error("用户未登录");
             }
             
