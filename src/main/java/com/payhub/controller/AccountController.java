@@ -72,6 +72,7 @@ public class AccountController {
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
             data.put("accountId", loginAccount.getAccountId());
+            data.put("userFlag", loginAccount.getUserFlag());
             
             return Result.success(data, 3);
         } else {

@@ -10,9 +10,12 @@ import {
  */
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role))
+    const hasAccess = roles.some(role => route.meta.roles.includes(role));
+    console.log(`权限检查 - 路由: ${route.path || route.name}, 需要角色: ${route.meta.roles}, 用户角色: ${roles}, 有权限: ${hasAccess}`);
+    return hasAccess;
   } else {
-    return true
+    console.log(`权限检查 - 路由: ${route.path || route.name}, 无角色限制, 允许访问`);
+    return true;
   }
 }
 
@@ -56,7 +59,12 @@ const actions = {
     commit
   }, roles) {
     return new Promise(resolve => {
+      console.log('permission store generateRoutes - 输入角色:', roles);
+      console.log('permission store generateRoutes - asyncRoutes:', asyncRoutes);
+      
       var accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      console.log('permission store generateRoutes - 过滤后的路由:', accessedRoutes);
+      
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })
