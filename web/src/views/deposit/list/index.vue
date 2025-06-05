@@ -296,23 +296,40 @@
               empty-text="暂无交易记录"
               class="data-table"
             >
-              <el-table-column prop="id" label="ID" width="60" />
-              <el-table-column prop="transactionId" label="交易流水号" width="180" />
-              <el-table-column prop="fromAccountId" label="转出账户" width="100" />
-              <el-table-column prop="toAccountId" label="转入账户" width="100" />
-              <el-table-column prop="amount" label="金额" width="100" />
-              <el-table-column prop="currency" label="币种" width="80" />
-              <el-table-column prop="status" label="状态" width="100">
+              <el-table-column prop="id" label="ID" width="80" />
+              <el-table-column prop="creditCardId" label="信用卡ID" width="100">
                 <template #default="scope">
-                  <el-tag :type="scope.row.status === 'SUCCESS' ? 'success' : 'danger'">
-                    {{ scope.row.status === 'SUCCESS' ? '成功' : '失败' }}
+                  {{ scope.row.creditCardId || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="accountId" label="账户ID" width="100" />
+              <el-table-column prop="type" label="类型" width="100">
+                <template #default="scope">
+                  <el-tag :type="getTransactionTypeTag(scope.row.type)">
+                    {{ getTransactionTypeText(scope.row.type) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="type" label="类型" width="100" />
-              <el-table-column prop="description" label="备注" min-width="120" />
-              <el-table-column prop="createdAt" label="创建时间" width="180" />
-              <el-table-column prop="completedAt" label="完成时间" width="180" />
+              <el-table-column prop="amount" label="金额" width="120">
+                <template #default="scope">
+                  {{ scope.row.amount ? scope.row.amount.toFixed(2) : '0.00' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="description" label="描述" min-width="120">
+                <template #default="scope">
+                  {{ scope.row.description || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="transactionTime" label="交易时间" width="180">
+                <template #default="scope">
+                  {{ scope.row.transactionTime ? formatDateTime(scope.row.transactionTime) : '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="createdAt" label="创建时间" width="180">
+                <template #default="scope">
+                  {{ formatDateTime(scope.row.createdAt) }}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -686,17 +703,35 @@ export default {
       this.recordLoading = true;
       this.recordTableLoading = true;
       
-      queryTransactionRecords(parseInt(this.recordForm.accountId, 10)).then(response => {
-        console.log('Query records response:', response);
+      const payload = {
+        token: this.token,
+        accountId: parseInt(this.recordForm.accountId, 10)
+      };
+      
+      console.log('Query records payload:', payload);
+      
+      queryTransactionRecords(payload.accountId).then(response => {
+        console.log('Query records raw response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.recordList = response.data || [];
-          if (this.recordList.length === 0) {
-            this.$message.info('未找到交易记录');
-          }
-        } else {
-          this.recordList = [];
-          this.$message.error(response.msg || '查询交易记录失败');
+        // 直接使用 response，因为它已经是 data 部分了
+        const records = Array.isArray(response) ? response : [];
+        console.log('Processed records:', records);
+        
+        // 处理每条记录的数据
+        this.recordList = records.map(record => {
+          console.log('Processing record:', record);
+          return {
+            ...record,
+            amount: parseFloat(record.amount) || 0,
+            transactionTime: record.transactionTime || null,
+            createdAt: record.createdAt || null
+          };
+        });
+        
+        console.log('Final recordList:', this.recordList);
+        
+        if (this.recordList.length === 0) {
+          this.$message.info('未找到交易记录');
         }
       }).catch((error) => {
         console.error("Query records error:", error);
@@ -722,7 +757,50 @@ export default {
       if (this.$refs.transferFormRef) {
         this.$refs.transferFormRef.resetFields();
       }
-    }
+    },
+
+    getTransactionTypeTag(type) {
+      const typeMap = {
+        'CONSUME': 'danger',
+        'REPAYMENT': 'success',
+        'TRANSFER': 'warning',
+        'DEPOSIT': 'info',
+        'WITHDRAWAL': 'warning',
+        'CREDIT': 'success',
+        'DEBIT': 'danger'
+      };
+      return typeMap[type] || 'info';
+    },
+
+    getTransactionTypeText(type) {
+      const typeMap = {
+        'CONSUME': '消费',
+        'REPAYMENT': '还款',
+        'TRANSFER': '转账',
+        'DEPOSIT': '存款',
+        'WITHDRAWAL': '取款',
+        'CREDIT': '收入',
+        'DEBIT': '支出'
+      };
+      return typeMap[type] || type;
+    },
+
+    formatDateTime(datetime) {
+      if (!datetime) return '-';
+      try {
+        return new Date(datetime).toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+      } catch (e) {
+        return datetime;
+      }
+    },
   }
 };
 </script>

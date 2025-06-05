@@ -24,7 +24,7 @@
               width="180"
             />
             <el-table-column
-              prop="balance"
+              prop="availableCredit"
               label="余额"
               width="120"
             />
@@ -34,19 +34,19 @@
               width="120"
             />
             <el-table-column
-              prop="status"
+              prop="isLost"
               label="状态"
               width="100"
             >
               <template slot-scope="scope">
-                <el-tag :type="getStatusType(scope.row.status)">
-                  {{ getStatusText(scope.row.status) }}
+                <el-tag :type="getStatusType(scope.row.isLost)">
+                  {{ getStatusText(scope.row.isLost) }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column
               label="操作"
-              width="250"
+              width="350"
             >
               <template slot-scope="scope">
                 <el-button
@@ -64,13 +64,13 @@
                   @click="handleRepay(scope.row)"
                 >还款</el-button>
                 <el-button
-                  v-if="scope.row.status === 'NORMAL'"
+                  v-if="scope.row.isLost === false"
                   size="mini"
                   type="danger"
                   @click="handleReportLost(scope.row)"
                 >挂失</el-button>
                 <el-button
-                  v-if="scope.row.status === 'LOST'"
+                  v-if="scope.row.isLost === true"
                   size="mini"
                   type="warning"
                   @click="handleCancelLost(scope.row)"
@@ -267,7 +267,11 @@
     <!-- 交易记录对话框 -->
     <el-dialog title="交易记录" :visible.sync="transactionsDialogVisible" width="70%">
       <el-table :data="transactions" style="width: 100%">
-        <el-table-column prop="createTime" label="交易时间" width="180" />
+        <el-table-column prop="createdAt" label="交易时间" width="180">
+          <template slot-scope="scope">
+            {{ formatDate(scope.row.createdAt) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="type" label="交易类型" width="120">
           <template slot-scope="scope">
             <el-tag :type="scope.row.type === 'CONSUME' ? 'danger' : 'success'">
@@ -392,20 +396,10 @@ export default {
       this.loading = false
     },
     getStatusType(status) {
-      const map = {
-        NORMAL: 'success',
-        LOST: 'danger',
-        FROZEN: 'warning'
-      }
-      return map[status] || 'info'
+      return status ? 'danger' : 'success'
     },
     getStatusText(status) {
-      const map = {
-        NORMAL: '正常',
-        LOST: '已挂失',
-        FROZEN: '已冻结'
-      }
-      return map[status] || status
+      return status ? '已挂失' : '正常'
     },
     getApplicationStatusType(status) {
       const map = {
@@ -500,7 +494,8 @@ export default {
       this.currentCard = card
       try {
         const res = await getTransactions(card.id)
-        this.transactions = res.data
+        console.log('获取到的交易记录:', res)
+        this.transactions = res
         this.transactionsDialogVisible = true
       } catch (error) {
         this.$message.error('获取交易记录失败：' + error.message)
