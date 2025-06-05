@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'PriceHub',
+      title: 'PayHub',
       logo: 'logo.png'
     }
   }

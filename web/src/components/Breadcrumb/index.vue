@@ -33,7 +33,7 @@ export default {
       const first = matched[0]
 
       if (!this.isHome(first)) {
-        matched = [{ path: '/dataset', meta: { title: '好价汇' }}].concat(matched)
+        matched = [{ path: '/dataset', meta: { title: '智慧银行' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)

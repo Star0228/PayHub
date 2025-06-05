@@ -231,7 +231,7 @@ export default {
           if (response) { 
             this.$message.success(response.msg || '登录成功！');
             const storePayload = {
-              token: response, // 假设 token 在 response.data 中
+              token: response.token, // 假设 token 在 response.data 中
               accountId: this.loginForm.id,
               username: this.loginForm.username
               // password: this.loginForm.password

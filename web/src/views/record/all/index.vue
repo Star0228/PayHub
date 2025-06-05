@@ -22,7 +22,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userId', 'userName', 'roles']),
+    ...mapGetters(['token','userId', 'userName', 'roles']),
   },
   mounted() {
     this.fetchSearchRecords(); // 组件挂载时获取搜索记录

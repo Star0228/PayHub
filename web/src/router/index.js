@@ -20,14 +20,14 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/good',
+    redirect: '/deposit',
     children: [
       {
-        path: 'good',
-        name: 'Good',
-        component: () => import('@/views/good/list/index'),
+        path: 'deposit',
+        name: 'Deposit',
+        component: () => import('@/views/deposit/list/index'),
         meta: {
-          title: '商品信息',
+          title: '储蓄卡管理',
           icon: 'xj'
         }
       }]
@@ -35,30 +35,46 @@ export const constantRoutes = [
     {
       path: '/',
       component: Layout,
-      redirect: '/cart',
+      redirect: '/loan',
       children: [{
-        path: 'cart',
-        name: 'Cart',
-        component: () => import('@/views/cart/all/index'),
+        path: 'loan',
+        name: 'Loan',
+        component: () => import('@/views/loan/all/index'),
         meta: {
-          title: '我的收藏',
+          title: '贷款管理',
+          icon: 'new2'
+        }
+      }
+      ]
+    },
+    {
+      path: '/',
+      component: Layout,
+      redirect: '/foreign',
+      children: [{
+        path: 'foreign',
+        name: 'Foreign',
+        component: () => import('@/views/foreign/all/index'),
+        meta: {
+          title: '外汇管理',
           icon: 'pen'
         }
       }
       ]
     },
-  {
-    path: '/credit-card',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'CreditCard',
-        component: () => import('@/views/credit-card/index'),
-        meta: { title: '信用卡管理', icon: 'credit-card' }
-      }
-    ]
-  }
+    {
+      path: '/',
+      component: Layout,
+      redirect: '/credit-card',
+      children: [
+        {
+          path: 'index',
+          name: 'CreditCard',
+          component: () => import('@/views/credit-card/index'),
+          meta: { title: '信用卡管理', icon: 'new5' }
+        }
+      ]
+    }
   // ,
   // {
   //   path: '/',

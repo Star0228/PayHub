@@ -440,7 +440,7 @@ export default {
       
       const payload = {
         token:this.token,
-        accountId: parseInt(this.depositForm.accountId, 10),
+        userId: parseInt(this.depositForm.accountId, 10),
         type: this.depositForm.type,
         amount: parseFloat(this.depositForm.amount)
       };
@@ -450,13 +450,13 @@ export default {
       createDeposit(payload).then(response => {
         console.log('Create deposit response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.$message.success(response.msg || '创建存款成功');
+        if (response) {
+          this.$message.success('创建存款成功');
           this.queryDepositForm.accountId = this.depositForm.accountId;
           this.handleQueryDeposits();
           this.resetDepositForm();
         } else {
-          this.$message.error(response.msg || '创建存款失败');
+          this.$message.error('创建存款失败');
         }
       }).catch((error) => {
         console.error("Create deposit error:", error);
@@ -481,14 +481,15 @@ export default {
       this.tableLoading = true;
       
       const payload = {
-        accountId: this.token
+        token:this.token,
+        accountId: this.queryDepositForm.accountId
       };
       
       queryDeposits(payload).then(response => {
         console.log('Query deposits response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.depositList = response.data || [];
+        if (response) {
+          this.depositList = response || [];
           if (this.depositList.length === 0) {
             this.$message.info('未找到存款记录');
           }
@@ -543,17 +544,18 @@ export default {
         type: 'warning'
       }).then(() => {
         const payload = { 
+          // token:this.token,
           depositId 
         };
         
         withdrawDeposit(payload).then(response => {
           console.log('Withdraw response:', response);
           
-          if (response && (response.code === 200 || response.code === 0)) {
-            this.$message.success(response.msg || '取款成功');
+          if (response) {
+            this.$message.success('取款成功');
             this.handleQueryDeposits();
           } else {
-            this.$message.error(response.msg || '取款失败');
+            this.$message.error('取款失败');
           }
         }).catch((error) => {
           console.error("Withdraw error:", error);
@@ -609,6 +611,7 @@ export default {
       this.transferLoading = true;
       
       const payload = {
+        token:this.token,
         fromAccountId: parseInt(this.transferForm.fromAccountId, 10),
         toAccountId: parseInt(this.transferForm.toAccountId, 10),
         amount: parseFloat(this.transferForm.amount),
@@ -621,18 +624,18 @@ export default {
       transferMoney(payload).then(response => {
         console.log('Transfer response:', response);
         
-        if (response && (response.code === 200 || response.code === 0)) {
-          this.$message.success(response.msg || '转账成功');
+        if (response) {
+          this.$message.success(response || '转账成功');
           this.resetTransferForm();
         } else {
-          this.$message.error(response.msg || '转账失败');
+          this.$message.error(response || '转账失败');
         }
       }).catch((error) => {
         console.error("Transfer error:", error);
-        const errorMsg = error.response && error.response.data && error.response.data.msg 
-                          ? error.response.data.msg 
-                          : '转账失败，请检查网络或联系管理员';
-        this.$message.error(errorMsg);
+        // const errorMsg = error.response && error.response.data && error.response.data.msg 
+        //                   ? error.response.data.msg 
+        //                   : '转账失败，请检查网络或联系管理员';
+        // this.$message.error(errorMsg);
       }).finally(() => {
         this.transferLoading = false;
       });

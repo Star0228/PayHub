@@ -34,12 +34,12 @@ public class WebConfig implements WebMvcConfigurer {
                     "/account/reset-password",
                     "/vcode/send",
                     // 存款管理相关API
-                    "/deposit/create",
+//                    "/deposit/create",
                     "/deposit/list",
                     "/deposit/can-withdraw",
                     "/deposit/withdraw",
                     // 转账管理相关API
-                    "/transaction/transfer",
+//                    "/transaction/transfer",
                     "/transaction/balance/**",
                     "/transaction/records/**",
                     "/transaction/records-range",

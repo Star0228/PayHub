@@ -38,6 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'token',
       'sidebar',
       'userId',
       'userName'
