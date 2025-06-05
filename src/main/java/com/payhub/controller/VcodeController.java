@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/vcode") // 根据您提供的代码，路径为 /vcode
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class VcodeController {
 
     // private static final Logger logger = LoggerFactory.getLogger(VcodeController.class); // Logger 定义已移除
@@ -46,16 +46,16 @@ public class VcodeController {
         String type = requestPayload.getType();
 
         if (email == null || email.trim().isEmpty()) {
-            // logger.warn("发送验证码请求被拒绝：邮箱地址为空。"); // Logger 调用已移除 (原已注释)
+            // logger.warn("发送验证码请求被拒绝：邮箱地址为空。"); // Logger 调用已移除
             return Result.error("邮箱地址不能为空");
         }
         if (type == null || type.trim().isEmpty()) {
-            // logger.warn("发送验证码请求被拒绝：邮箱 {} 的验证码类型为空。", email); // Logger 调用已移除 (原已注释)
+            // logger.warn("发送验证码请求被拒绝：邮箱 {} 的验证码类型为空。", email); // Logger 调用已移除
             return Result.error("验证码类型不能为空");
         }
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            // logger.warn("发送验证码请求被拒绝：邮箱 {} 的格式无效。", email); // Logger 调用已移除 (原已注释)
+            // logger.warn("发送验证码请求被拒绝：邮箱 {} 的格式无效。", email); // Logger 调用已移除
             return Result.error("无效的邮箱地址格式");
         }
 

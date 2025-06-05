@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/transaction")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;

@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/credit-card")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class CreditCardController {
 
     @Autowired
@@ -162,4 +162,4 @@ class CreditCardTransactionRequest {
     public void setDescription(String description) {
         this.description = description;
     }
-} 
+}
