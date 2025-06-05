@@ -14,6 +14,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 放行CORS预检请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
         // 令牌验证
         System.out.println("所有请求头信息：");
         java.util.Enumeration<String> headerNames = request.getHeaderNames();

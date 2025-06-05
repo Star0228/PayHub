@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/deposit")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class DepositController {
     private static final Logger logger = LoggerFactory.getLogger(DepositController.class);
 
@@ -334,4 +334,4 @@ public class DepositController {
             this.amount = amount;
         }
     }
-} 
+}

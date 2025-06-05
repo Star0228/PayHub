@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/credit-card/application")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class CreditCardApplicationController {
 
     @Autowired
@@ -152,4 +152,4 @@ class CreditCardApplicationStatusRequest {
     public void setStatus(String status) {
         this.status = status;
     }
-} 
+}
