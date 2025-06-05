@@ -537,8 +537,8 @@ export default {
       checkWithdrawEligibility(payload).then(response => {
         console.log('Check withdraw response:', response);
         
-        if (response) {
-          this.withdrawCheckResult = response;
+        if (response && (response.code === 200 || response.code === 0)) {
+          this.withdrawCheckResult = response.data;
           this.withdrawCheckDialogVisible = true;
         } else {
           this.$message.error(response.msg || '检查取款资格失败');
@@ -674,7 +674,7 @@ export default {
       ).then(response => {
         console.log('Query balance response:', response);
         
-        if (response ) {
+        if (response && (response.code === 200 || response.code === 0)) {
           this.balanceResult = response.data;
         } else {
           this.balanceResult = null;
@@ -713,7 +713,6 @@ export default {
       queryTransactionRecords(payload.accountId).then(response => {
         console.log('Query records raw response:', response);
         
-// <<<<<<< Updated upstream
         // 直接使用 response，因为它已经是 data 部分了
         const records = Array.isArray(response) ? response : [];
         console.log('Processed records:', records);
@@ -725,7 +724,12 @@ export default {
             ...record,
             amount: parseFloat(record.amount) || 0,
             transactionTime: record.transactionTime || null,
-            createdAt: record.createdAt || null
+            createdAt: record.createdAt || null,
+            // creditCardId: record.creditCardId || null,
+            // type: record.type || 'UNKNOWN',
+            // description: record.description || '',
+            // id: record.id || '',
+            // accountId: record.accountId || '',
           };
         });
         
@@ -733,16 +737,6 @@ export default {
         
         if (this.recordList.length === 0) {
           this.$message.info('未找到交易记录');
-// =======
-//         if (response ) {
-//           this.recordList = response.data || [];
-//           if (this.recordList.length === 0) {
-//             this.$message.info('未找到交易记录');
-//           }
-//         } else {
-//           this.recordList = [];
-//           this.$message.error(response.msg || '查询交易记录失败');
-// >>>>>>> Stashed changes
         }
       }).catch((error) => {
         console.error("Query records error:", error);

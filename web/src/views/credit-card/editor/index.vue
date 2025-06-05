@@ -131,7 +131,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-
+<!-- 
         <el-tab-pane label="审核管理" name="review">
           <div v-if="!isAdmin" class="admin-tip">
             <el-alert
@@ -215,7 +215,7 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </el-card>
 

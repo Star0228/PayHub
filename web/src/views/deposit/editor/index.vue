@@ -561,10 +561,10 @@ export default {
         console.log('Transfer response:', response);
         
         if (response) {
-          this.$message.success(response || '转账成功');
+          this.$message.success('转账成功');
           this.resetTransferForm();
         } else {
-          this.$message.error(response || '转账失败');
+          this.$message.error('转账失败');
         }
       }).catch((error) => {
         console.error("Transfer error:", error);
@@ -616,13 +616,13 @@ export default {
         console.log('Query records response:', response);
         
         if (response ) {
-          this.recordList = response.data || [];
+          this.recordList = response || [];
           if (this.recordList.length === 0) {
             this.$message.info('未找到交易记录');
           }
         } else {
           this.recordList = [];
-          this.$message.error(response.msg || '查询交易记录失败');
+          this.$message.error('查询交易记录失败');
         }
       }).catch((error) => {
         console.error("Query records error:", error);

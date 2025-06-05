@@ -104,9 +104,9 @@ export const asyncRoutes = [
     }]
   },
   {
-    path: '/foreign',
+    path: '/foreign1',
     component: Layout,
-    redirect: '/foreign',
+    redirect: '/foreign1',
     children: [{
       path: '',
       name: 'Foreign',
@@ -151,9 +151,9 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/credit-card',
+    path: '/credit-card1',
     component: Layout,
-    redirect: '/credit-card',
+    redirect: '/credit-card1',
     children: [
       {
         path: '',
